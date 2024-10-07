@@ -1,12 +1,11 @@
+import pg from 'pg';
 
-const connectDB = async () => {
-    try {
-
-        console.log('Connection established');
-    } catch (error) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
-    }
+const config = {
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
 };
 
-export default connectDB;
+export const pool = new pg.Pool(config);

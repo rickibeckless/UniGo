@@ -1,2 +1,3 @@
+import studentRoutes from './studentRoutes.js';
 
-export {  };
+export { studentRoutes };

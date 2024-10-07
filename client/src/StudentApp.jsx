@@ -4,16 +4,15 @@ import AuthContext from "./context/AuthContext";
 import { Outlet } from "react-router-dom";
 import './App.css';
 
-function App() {
+function StudentApp() {
 
     return (
         <div className="App">
             <header id="main-header">
-                <h1 id="main-logo"><a href="/">UniGo</a></h1>
+                <h1 id="main-logo"><a href="/">UniGo | Student</a></h1>
                 <nav id="main-navbar">
                     <ul>
-                        <li><a href="/">Educator Login</a></li>
-                        <li><a href="/stu/login">Student Login</a></li>
+                        <li><a href="#">School Link</a></li>
                     </ul>
                 </nav>
             </header>
@@ -41,4 +40,4 @@ function App() {
     );
 };
 
-export default App;
+export default StudentApp;

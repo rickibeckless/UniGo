@@ -12,12 +12,12 @@ h2 {
     color: #333333;
 }
 
-#subject-list {
+.info-list {
     list-style: none;
     padding: 0;
 }
 
-.subject-holder {
+.info-holder {
     margin: 1rem 0;
     background-color: #ffffff;
     border: 1px solid #dddddd;
@@ -26,7 +26,7 @@ h2 {
     padding: 1rem;
 }
 
-.subject {
+.info {
     font-weight: 600;
     font-size: 1.5rem;
     cursor: pointer;
@@ -44,7 +44,7 @@ h2 {
     background-color: #e6f7ff;
 }
 
-.view-all-classes-link {
+.view-all-info-link {
     font-size: .9rem;
     color: #0073e6;
     text-decoration: none;
@@ -52,12 +52,12 @@ h2 {
     font-weight: 400;
 }
 
-.view-all-classes-link:hover {
+.view-all-info-link:hover {
     color: #005bb5;
     font-weight: 500;
 }
 
-.subject-description {
+.info-description {
     font-size: 1rem;
     color: #383838;
     font-style: italic;
@@ -73,7 +73,7 @@ h2 {
     transition: all 0.2s;
 }
 
-.subject-description:hover {
+.info-description:hover {
     border-left: 5px solid #0073e6;
     border-right: 5px solid #0073e6;
     border-radius: 10px;

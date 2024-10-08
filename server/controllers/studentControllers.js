@@ -28,3 +28,30 @@ export const loginStudent = async (req, res) => {
         res.status(400).send(error);
     }
 };
+
+export const getAllStudentInformation = async (req, res) => {
+    const studentId = req.params.studentId;
+    try {
+        const student = await pool.query('SELECT * FROM students WHERE student_id = $1', [studentId]);
+        const enrollments = await pool.query('SELECT * FROM enrollments WHERE student_id = $1', [studentId]);
+        const studentRows = student.rows;
+        const enrollmentsRows = enrollments.rows;
+
+        res.status(200).send({
+            studentRows,
+            enrollmentsRows
+        });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+}
+
+// export const getStudentClasses = async (req, res) => {
+//     const studentId = req.params.studentId;
+//     try {
+//         const enrollments = await pool.query('SELECT * FROM enrollments WHERE student_id = $1', [studentId]);
+//         res.status(200).send(enrollments.rows);
+//     } catch (error) {
+//         res.status(400).send(error);
+//     }
+// };

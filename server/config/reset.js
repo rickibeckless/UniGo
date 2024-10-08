@@ -11,6 +11,9 @@ const executeQuery = async (query, successMessage) => {
 };
 
 const createTables = async () => {
+    const createStudentIdSequence = `CREATE SEQUENCE IF NOT EXISTS student_id_seq`;
+
+    // Schools Table
     const createSchoolsTable = `CREATE TABLE IF NOT EXISTS schools (
         school_id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
         school_name VARCHAR(50) NOT NULL,
@@ -21,6 +24,7 @@ const createTables = async () => {
         updated_at TIMESTAMPTZ DEFAULT now()
     )`;
 
+    // Administrators Table
     const createAdministratorsTable = `CREATE TABLE IF NOT EXISTS administrators (
         admin_id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
         first_name VARCHAR(50) NOT NULL,
@@ -34,6 +38,7 @@ const createTables = async () => {
         updated_at TIMESTAMPTZ DEFAULT now()
     )`;
 
+    // Educators Table
     const createEducatorsTable = `CREATE TABLE IF NOT EXISTS educators (
         educator_id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
         first_name VARCHAR(50) NOT NULL,
@@ -48,8 +53,10 @@ const createTables = async () => {
         updated_at TIMESTAMPTZ DEFAULT now()
     )`;
 
+    // Students Table
     const createStudentsTable = `CREATE TABLE IF NOT EXISTS students (
         student_id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+        general_student_id VARCHAR(11),
         first_name VARCHAR(50) NOT NULL,
         last_name VARCHAR(50) NOT NULL,
         email VARCHAR(50) UNIQUE NOT NULL,
@@ -57,11 +64,32 @@ const createTables = async () => {
         phone_number VARCHAR(50),
         enrollment_date DATE NOT NULL,
         graduation_date DATE,
+        current_credits VARCHAR(50) DEFAULT '0',
         school_id uuid REFERENCES schools(school_id) ON DELETE CASCADE NOT NULL,
         created_at TIMESTAMPTZ DEFAULT now(),
         updated_at TIMESTAMPTZ DEFAULT now()
     )`;
 
+    // Create Trigger Function to generate general_student_id
+    const createTriggerFunction = `
+        CREATE OR REPLACE FUNCTION generate_student_id()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            NEW.general_student_id := 'S' || LPAD(nextval('student_id_seq')::text, 9, '0');
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+    `;
+
+    // Create Trigger
+    const createTrigger = `
+        CREATE TRIGGER set_student_id
+        BEFORE INSERT ON students
+        FOR EACH ROW
+        EXECUTE FUNCTION generate_student_id();
+    `;
+
+    // Courses Table
     const createCoursesTable = `CREATE TABLE IF NOT EXISTS courses (
         course_id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
         course_name VARCHAR(50) NOT NULL,
@@ -129,11 +157,13 @@ const createTables = async () => {
         updated_at TIMESTAMPTZ DEFAULT now()
     )`;
 
-    // Create tables in proper order
+    await executeQuery(createStudentIdSequence, 'Student ID sequence created successfully');
     await executeQuery(createSchoolsTable, 'Schools table created successfully');
     await executeQuery(createAdministratorsTable, 'Administrators table created successfully');
     await executeQuery(createEducatorsTable, 'Educators table created successfully');
     await executeQuery(createStudentsTable, 'Students table created successfully');
+    await executeQuery(createTriggerFunction, 'Trigger function for general_student_id created successfully');
+    await executeQuery(createTrigger, 'Trigger for general_student_id set successfully');
     await executeQuery(createCoursesTable, 'Courses table created successfully');
     await executeQuery(createEnrollmentsTable, 'Enrollments table created successfully');
     await executeQuery(createAssignmentsTable, 'Assignments table created successfully');
@@ -200,8 +230,8 @@ const seedTables = async () => {
 
         // seed students
         const seedStudent = `
-            INSERT INTO students (first_name, last_name, email, password, phone_number, enrollment_date, graduation_date, school_id, created_at, updated_at)
-            VALUES ('Alex', 'Thompson', 'alex.thompson@student.horizonridge.edu', 'password', '(555) 000-1122', '2023-09-01', NULL, '${schoolId}', NOW(), NOW())
+            INSERT INTO students (first_name, last_name, email, password, phone_number, enrollment_date, graduation_date, current_credits, school_id, created_at, updated_at)
+            VALUES ('Alex', 'Thompson', 'alex.thompson@student.horizonridge.edu', 'password', '(555) 000-1122', '2023-09-01', NULL, '0', '${schoolId}', NOW(), NOW())
             RETURNING student_id
         `
         const studentResult = await pool.query(seedStudent);

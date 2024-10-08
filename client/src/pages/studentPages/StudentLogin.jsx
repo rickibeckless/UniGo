@@ -35,7 +35,7 @@ export default function StudentLogin() {
 
             localStorage.setItem("token", data.token);
             login(data.token);
-            navigate("/");
+            navigate("/stu");
         } catch (err) {
             console.error('Login error:', err);
             setError(err.message);
